@@ -22,6 +22,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type helloOption struct {
+	age      int
+	lastName string
+}
+
+var helloOpt = helloOption{}
+
 // helloCmd represents the hello command
 var helloCmd = &cobra.Command{
 	Use:   "hello",
@@ -35,6 +42,12 @@ var helloCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		fmt.Printf("Hello, %s\n", args[0])
+		if helloOpt.lastName != "" {
+			fmt.Printf("Name: %s %s\n", args[0], helloOpt.lastName)
+		}
+		if helloOpt.age >= 0 {
+			fmt.Printf("Age: %v\n", helloOpt.age)
+		}
 		return nil
 	},
 }
@@ -42,13 +55,6 @@ var helloCmd = &cobra.Command{
 func init() {
 	rootCmd.AddCommand(helloCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// helloCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// helloCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	helloCmd.Flags().IntVarP(&helloOpt.age, "age", "a", -1, "Age")
+	helloCmd.Flags().StringVarP(&helloOpt.lastName, "last-name", "l", "", "Last name")
 }

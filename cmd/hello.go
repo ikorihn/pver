@@ -27,34 +27,36 @@ type helloOption struct {
 	lastName string
 }
 
-var helloOpt = helloOption{}
+func newHelloCmd() *cobra.Command {
 
-// helloCmd represents the hello command
-var helloCmd = &cobra.Command{
-	Use:   "hello",
-	Short: "Say hello",
-	Long:  `Longer desription for hello command. Say hello to whom specified in arg.`,
-	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return errors.New("Name is required")
-		}
-		return nil
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		fmt.Printf("Hello, %s\n", args[0])
-		if helloOpt.lastName != "" {
-			fmt.Printf("Name: %s %s\n", args[0], helloOpt.lastName)
-		}
-		if helloOpt.age >= 0 {
-			fmt.Printf("Age: %v\n", helloOpt.age)
-		}
-		return nil
-	},
-}
+	helloOpt := helloOption{}
 
-func init() {
-	rootCmd.AddCommand(helloCmd)
+	// helloCmd represents the hello command
+	helloCmd := &cobra.Command{
+		Use:   "hello",
+		Short: "Say hello",
+		Long:  `Longer desription for hello command. Say hello to whom specified in arg.`,
+		Args: func(cmd *cobra.Command, args []string) error {
+			if len(args) < 1 {
+				return errors.New("Name is required")
+			}
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Printf("Hello, %s\n", args[0])
+			if helloOpt.lastName != "" {
+				fmt.Printf("Name: %s %s\n", args[0], helloOpt.lastName)
+			}
+			if helloOpt.age >= 0 {
+				fmt.Printf("Age: %v\n", helloOpt.age)
+			}
+			return nil
+		},
+	}
 
 	helloCmd.Flags().IntVarP(&helloOpt.age, "age", "a", -1, "Age")
 	helloCmd.Flags().StringVarP(&helloOpt.lastName, "last-name", "l", "", "Last name")
+
+	return helloCmd
+
 }

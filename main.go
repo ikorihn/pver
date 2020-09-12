@@ -15,8 +15,17 @@ limitations under the License.
 */
 package main
 
-import "github.com/r57ty7/pver/cmd"
+import (
+	"fmt"
+	"os"
+
+	"github.com/r57ty7/pver/cmd"
+)
 
 func main() {
-	cmd.Execute()
+	cmd := cmd.NewCmdRoot()
+	if err := cmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

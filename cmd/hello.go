@@ -17,7 +17,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -43,12 +42,12 @@ func newHelloCmd() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("Hello, %s\n", args[0])
+			cmd.Printf("Hello, %s\n", args[0])
 			if helloOpt.lastName != "" {
-				fmt.Printf("Name: %s %s\n", args[0], helloOpt.lastName)
+				cmd.Printf("Name: %s %s\n", args[0], helloOpt.lastName)
 			}
 			if helloOpt.age >= 0 {
-				fmt.Printf("Age: %v\n", helloOpt.age)
+				cmd.Printf("Age: %v\n", helloOpt.age)
 			}
 			return nil
 		},

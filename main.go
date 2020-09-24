@@ -15,8 +15,19 @@ limitations under the License.
 */
 package main
 
-import "github.com/r57ty7/pver/cmd"
+import (
+	"fmt"
+	"os"
+
+	"github.com/r57ty7/pver/cmd"
+	"github.com/r57ty7/pver/service"
+)
 
 func main() {
-	cmd.Execute()
+	pomFvm := service.NewMavenProject()
+	cmd := cmd.NewCmdRoot(pomFvm)
+	if err := cmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

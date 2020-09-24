@@ -1,3 +1,10 @@
 [pom]
 #indent = "\t"
 #filepath = "pom.xml"
+[npm]
+#filepath = "package.json"
+
+[jira]
+baseUrl = ""
+username = ""
+password = ""

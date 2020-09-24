@@ -65,6 +65,7 @@ func NewCmdRoot(pomFvm FileVersionManager, npmFvm FileVersionManager, gr GitRepo
 
 	rootCmd.AddCommand(newPomCmd(pomFvm))
 	rootCmd.AddCommand(newNpmCmd(npmFvm))
+	rootCmd.AddCommand(newJiraCmd())
 
 	return rootCmd
 }

@@ -1,8 +1,9 @@
 package cmd
 
 type Config struct {
-	Pom pom
-	Npm npm
+	Pom  pom
+	Npm  npm
+	Jira jira
 }
 
 type pom struct {
@@ -12,4 +13,10 @@ type pom struct {
 
 type npm struct {
 	Filepath string
+}
+
+type jiraConfig struct {
+	BaseURL  string
+	Username string
+	Password string
 }

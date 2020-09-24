@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
-	"strings"
+	"regexp"
 )
 
 type MavenProject struct {
@@ -94,15 +94,14 @@ func (p *MavenProject) Update(newVersion string) error {
 		return err
 	}
 
-	// TODO parseが冗長なので正規表現をつかいたい
-	format := "<version>%s</version>"
-	pomXML, err := p.parse()
-	if err != nil {
-		return err
-	}
+	// ルート直下のバージョンタグの中身を更新する
+	// TODO ルート直下を表す正規表現がかけなかったのでインデント幅で判定する インデントはオプションで設定する
+	indent := `  `
+	pattern := fmt.Sprintf(`(?m)^(%s<version>)(.*?)(</version>)$`, indent)
+	format := regexp.MustCompile(pattern)
+	updatedXML := format.ReplaceAll(bytes, []byte(fmt.Sprintf("${1}%s$3", newVersion)))
 
-	updatedXML := strings.Replace(string(bytes), fmt.Sprintf(format, pomXML.Version), fmt.Sprintf(format, newVersion), 1)
-	err = ioutil.WriteFile(p.filePath, []byte(updatedXML), 0644)
+	err = ioutil.WriteFile(p.filePath, updatedXML, 0644)
 	if err != nil {
 		fmt.Printf("write file err: %v\n", err)
 		return err

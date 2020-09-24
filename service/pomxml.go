@@ -102,6 +102,10 @@ func (p *MavenProject) Update(newVersion string) error {
 	// TODO ルート直下を表す正規表現がかけなかったのでインデント幅で判定する インデントはオプションで設定する
 	pattern := fmt.Sprintf(`(?m)^(%s<version>)(.*?)(</version>)$`, p.indent)
 	format := regexp.MustCompile(pattern)
+
+	if !format.Match(bytes) {
+		return fmt.Errorf("version tag not found")
+	}
 	updatedXML := format.ReplaceAll(bytes, []byte(fmt.Sprintf("${1}%s$3", newVersion)))
 
 	err = ioutil.WriteFile(p.filePath, updatedXML, 0644)

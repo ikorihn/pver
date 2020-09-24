@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
-
-	"github.com/r57ty7/pver/cmd"
 )
 
 type PackgeJson struct {
@@ -38,7 +36,7 @@ func (p *NpmProject) parse() (PackgeJson, error) {
 
 	return packageJson, nil
 }
-func (p *NpmProject) SetConfig(config cmd.Config) {
+func (p *NpmProject) SetConfig(config Config) {
 	p.filePath = config.Npm.Filepath
 }
 

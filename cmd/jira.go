@@ -43,7 +43,7 @@ func newJiraSearchCmd() *cobra.Command {
 		Use:   "search",
 		Short: "Search JIRA ticket",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := infra.NewClient(nil, config.Jira.BaseURL, config.Jira.Username, config.Jira.Password)
+			client, err := infra.NewClient(nil, conf.Jira.BaseURL, conf.Jira.Username, conf.Jira.Password)
 			if err != nil {
 				return err
 			}
@@ -56,9 +56,10 @@ func newJiraSearchCmd() *cobra.Command {
 			}
 
 			for _, v := range issues {
-				fmt.Printf("%v\n", v.TicketId)
+				fmt.Printf("%v\n", v)
 			}
 
+			return nil
 		},
 	}
 	return jiraCmd

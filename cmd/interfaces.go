@@ -3,12 +3,12 @@ package cmd
 import (
 	"context"
 
-	"github.com/r57ty7/jiracket/domain"
+	"github.com/r57ty7/pver/service"
 )
 
 // FileVersionManager バージョンファイル操作インターフェース
 type FileVersionManager interface {
-	SetConfig(conf Config)
+	SetConfig(conf service.Config)
 	Version() string
 	Update(newVersion string) error
 }
@@ -20,5 +20,5 @@ type GitRepository interface {
 
 // JiraRepository JIRA
 type JiraRepository interface {
-	Search(ctx context.Context, jql string) ([]domain.Issue, error)
+	Search(ctx context.Context, jql string) ([]service.Issue, error)
 }

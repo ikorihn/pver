@@ -1,4 +1,4 @@
-package cmd
+package service
 
 type Config struct {
 	Pom  pom
@@ -15,7 +15,7 @@ type npm struct {
 	Filepath string
 }
 
-type jiraConfig struct {
+type jira struct {
 	BaseURL  string
 	Username string
 	Password string

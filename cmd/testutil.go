@@ -1,13 +1,17 @@
 package cmd
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/r57ty7/pver/service"
+)
 
 // FileVersionManager の mock
 type mockFvm struct {
 	version string
 }
 
-func (m *mockFvm) SetConfig(conf Config) {
+func (m *mockFvm) SetConfig(conf service.Config) {
 }
 
 func (m *mockFvm) Version() string {

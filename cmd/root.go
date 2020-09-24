@@ -19,20 +19,22 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile       string
+	conf          service.Config
+	gitRepository GitRepository
+	pomFvm        FileVersionManager
+	npmFvm        FileVersionManager
+)
 
-var gitRepository GitRepository
-
-var conf Config
-
-func NewCmdRoot(pomFvm FileVersionManager, npmFvm FileVersionManager, gr GitRepository) *cobra.Command {
-	gitRepository = gr
+func NewCmdRoot() *cobra.Command {
 
 	// rootCmd represents the base command when called without any subcommands
 	var rootCmd = &cobra.Command{
@@ -62,6 +64,10 @@ func NewCmdRoot(pomFvm FileVersionManager, npmFvm FileVersionManager, gr GitRepo
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	pomFvm = service.NewMavenProject()
+	npmFvm = service.NewNpmProject()
+	gitRepository = service.NewRepository("./")
 
 	rootCmd.AddCommand(newPomCmd(pomFvm))
 	rootCmd.AddCommand(newNpmCmd(npmFvm))

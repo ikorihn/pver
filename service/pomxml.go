@@ -61,6 +61,14 @@ func NewMavenProject() *MavenProject {
 	return &MavenProject{}
 }
 
+var writeFile func(filePath string, content []byte) error
+
+func init() {
+	writeFile = func(filePath string, content []byte) error {
+		return ioutil.WriteFile(filePath, content, 0644)
+	}
+}
+
 func (p *MavenProject) parse() (PomXml, error) {
 	var pom PomXml
 
@@ -108,7 +116,8 @@ func (p *MavenProject) Update(newVersion string) error {
 	}
 	updatedXML := format.ReplaceAll(bytes, []byte(fmt.Sprintf("${1}%s$3", newVersion)))
 
-	err = ioutil.WriteFile(p.filePath, updatedXML, 0644)
+	err = writeFile(p.filePath, updatedXML)
+
 	if err != nil {
 		fmt.Printf("write file err: %v\n", err)
 		return err

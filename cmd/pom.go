@@ -27,22 +27,24 @@ func newPomCmd(fvm FileVersionManager) *cobra.Command {
 		Use:   "pom [pom.xml]",
 		Short: "Show, update pom.xml's version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			pomFile := "pom.xml"
-			if len(args) > 0 {
-				pomFile = args[0]
+			if conf.Pom.Filepath == "" {
+				conf.Pom.Filepath = "pom.xml"
+			}
+			if conf.Pom.Indent == "" {
+				conf.Pom.Indent = "  "
 			}
 
-			fvm.SetFile(pomFile)
+			fvm.SetConfig(conf)
 			version := fvm.Version()
 			cmd.Printf("Version: %v\n", version)
 
 			if updateVer != "" {
-				cmd.Printf("Update to => %v\n", updateVer)
 				err := fvm.Update(updateVer)
 				if err != nil {
 					cmd.PrintErrf("update error: %v", err)
 					return err
 				}
+				cmd.Printf("Updated to => %v\n", updateVer)
 			}
 			return nil
 		},

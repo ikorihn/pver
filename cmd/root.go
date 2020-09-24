@@ -27,20 +27,32 @@ import (
 
 var cfgFile string
 
+type Config struct {
+	Pom pom
+}
+type pom struct {
+	Filepath string
+	Indent   string
+}
+
+var conf Config
+
 func NewCmdRoot(pomFvm FileVersionManager) *cobra.Command {
 	// rootCmd represents the base command when called without any subcommands
 	var rootCmd = &cobra.Command{
 		Use:   "pver",
-		Short: "A brief description of your application",
-		Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+		Short: "project versioning",
+		// 		Long: `A longer description that spans multiple lines and likely contains
+		// examples and usage of using your application. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+		// Cobra is a CLI library for Go that empowers applications.
+		// This application is a tool to generate the needed files
+		// to quickly create a Cobra application.`,
 		// Uncomment the following line if your bare application
 		// has an action associated with it:
-		//	Run: func(cmd *cobra.Command, args []string) { },
+		Run: func(cmd *cobra.Command, args []string) {
+			cmd.Printf("%+v", conf)
+		},
 	}
 
 	cobra.OnInitialize(initConfig)
@@ -75,6 +87,7 @@ func initConfig() {
 
 		// Search config in home directory with name ".pver" (without extension).
 		viper.AddConfigPath(home)
+		viper.AddConfigPath(".")
 		viper.SetConfigName(".pver")
 	}
 
@@ -83,5 +96,10 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	}
+
+	if err := viper.Unmarshal(&conf); err != nil {
+		fmt.Printf("unmarshal error: %v\n", err)
+		return
 	}
 }

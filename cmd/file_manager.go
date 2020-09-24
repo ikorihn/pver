@@ -2,7 +2,7 @@ package cmd
 
 // FileVersionManager バージョンファイル操作インターフェース
 type FileVersionManager interface {
-	SetFile(filePath string)
+	SetConfig(conf Config)
 	Version() string
 	Update(newVersion string) error
 }

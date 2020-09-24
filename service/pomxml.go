@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
+
+	"github.com/r57ty7/pver/cmd"
 )
 
 type MavenProject struct {
 	filePath string
+	indent   string
 }
 
 type PomXml struct {
@@ -75,8 +78,9 @@ func (p *MavenProject) parse() (PomXml, error) {
 	return pom, nil
 }
 
-func (p *MavenProject) SetFile(filePath string) {
-	p.filePath = filePath
+func (p *MavenProject) SetConfig(config cmd.Config) {
+	p.filePath = config.Pom.Filepath
+	p.indent = config.Pom.Indent
 }
 
 func (p *MavenProject) Version() string {
@@ -96,8 +100,7 @@ func (p *MavenProject) Update(newVersion string) error {
 
 	// ルート直下のバージョンタグの中身を更新する
 	// TODO ルート直下を表す正規表現がかけなかったのでインデント幅で判定する インデントはオプションで設定する
-	indent := `  `
-	pattern := fmt.Sprintf(`(?m)^(%s<version>)(.*?)(</version>)$`, indent)
+	pattern := fmt.Sprintf(`(?m)^(%s<version>)(.*?)(</version>)$`, p.indent)
 	format := regexp.MustCompile(pattern)
 	updatedXML := format.ReplaceAll(bytes, []byte(fmt.Sprintf("${1}%s$3", newVersion)))
 

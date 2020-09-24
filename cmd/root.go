@@ -27,6 +27,8 @@ import (
 
 var cfgFile string
 
+var gitRepository GitRepository
+
 type Config struct {
 	Pom pom
 }
@@ -37,7 +39,9 @@ type pom struct {
 
 var conf Config
 
-func NewCmdRoot(pomFvm FileVersionManager) *cobra.Command {
+func NewCmdRoot(pomFvm FileVersionManager, gr GitRepository) *cobra.Command {
+	gitRepository = gr
+
 	// rootCmd represents the base command when called without any subcommands
 	var rootCmd = &cobra.Command{
 		Use:   "pver",

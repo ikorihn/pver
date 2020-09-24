@@ -16,15 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"errors"
-	"fmt"
-	"os"
-	"time"
-
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/spf13/cobra"
-	"github.com/tcnksm/go-gitconfig"
 )
 
 // pomCmd represents the pom command
@@ -54,44 +46,7 @@ func newPomCmd(fvm FileVersionManager) *cobra.Command {
 				}
 				cmd.Printf("Updated to => %v\n", updateVer)
 
-				wd := "./"
-				repo, err := git.PlainOpen(wd)
-				if err != nil {
-					if errors.Is(err, git.ErrRepositoryNotExists) {
-						// make error message git-like
-						fmt.Println("fatal: not a git repository")
-						os.Exit(1)
-					}
-					return nil
-				}
-
-				w, err := repo.Worktree()
-				if err != nil {
-					return err
-				}
-				_, err = w.Add(conf.Pom.Filepath)
-				if err != nil {
-					return err
-				}
-
-				email, err := gitconfig.Email()
-				if err != nil {
-					return err
-				}
-				name, err := gitconfig.Username()
-				if err != nil {
-					return err
-				}
-
-				fmt.Printf("commit: version up to %s\n", updateVer)
-				w.Commit(fmt.Sprintf("version up to %s", updateVer), &git.CommitOptions{
-					Author: &object.Signature{
-						Email: email,
-						Name:  name,
-						When:  time.Now(),
-					},
-				})
-				return nil
+				gitRepository.CommitUpdate(conf.Pom.Filepath, updateVer)
 			}
 			return nil
 		},

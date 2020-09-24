@@ -6,3 +6,8 @@ type FileVersionManager interface {
 	Version() string
 	Update(newVersion string) error
 }
+
+// GitRepository Git関連
+type GitRepository interface {
+	CommitUpdate(filePath string, updateVer string) error
+}

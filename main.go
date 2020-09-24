@@ -25,7 +25,8 @@ import (
 
 func main() {
 	pomFvm := service.NewMavenProject()
-	cmd := cmd.NewCmdRoot(pomFvm)
+	repository := service.NewRepository("./")
+	cmd := cmd.NewCmdRoot(pomFvm, repository)
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

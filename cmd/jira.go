@@ -19,13 +19,15 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/r57ty7/pver/infra"
+	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 )
 
 func newJiraCmd() *cobra.Command {
 	var jiraCmd = &cobra.Command{
 		Use:   "jira",
-		Short: "Search JIRA ticket",
+		Short: "JIRA related operation",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
@@ -41,12 +43,12 @@ func newJiraSearchCmd() *cobra.Command {
 		Use:   "search",
 		Short: "Search JIRA ticket",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := jira.NewClient(nil, config.Jira.BaseURL, config.Jira.Username, config.Jira.Password)
+			client, err := infra.NewClient(nil, config.Jira.BaseURL, config.Jira.Username, config.Jira.Password)
 			if err != nil {
 				return err
 			}
 
-			repo := jira.NewSearchRepository(client)
+			repo := service.NewJiraRepository(client)
 
 			issues, err := repo.Search(context.Background(), "")
 			if err != nil {

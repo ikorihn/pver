@@ -57,13 +57,13 @@ func (p *NpmProject) Update(newVersion string) error {
 		return err
 	}
 
-	pattern := `(?m)^(\s*"version":\s*)(.*)$`
+	pattern := `("version":\s*)(".*")`
 	format := regexp.MustCompile(pattern)
 
 	if !format.Match(bytes) {
 		return fmt.Errorf("version tag not found")
 	}
-	updatedJSON := format.ReplaceAll(bytes, []byte(fmt.Sprintf("${1}%s", newVersion)))
+	updatedJSON := format.ReplaceAll(bytes, []byte(fmt.Sprintf(`${1}"%s"`, newVersion)))
 
 	err = writeFile(p.filePath, updatedJSON)
 

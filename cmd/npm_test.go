@@ -6,15 +6,14 @@ import (
 	"testing"
 )
 
-// pomver pom のテスト
-func Test_pomCmd_Execute(t *testing.T) {
+func Test_npmCmd_Execute(t *testing.T) {
 	setUp(t)
 
 	mockFvm := &mockFvm{
 		version: "1.0.0",
 	}
 
-	cmd := newPomCmd(mockFvm)
+	cmd := newNpmCmd(mockFvm)
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)
@@ -32,15 +31,14 @@ func Test_pomCmd_Execute(t *testing.T) {
 
 }
 
-// pomver pom -u xxx のテスト
-func Test_pomCmd_Execute_Update(t *testing.T) {
+func Test_npmCmd_Execute_Update(t *testing.T) {
 	setUp(t)
 
 	mockFvm := &mockFvm{
 		version: "1.0.0",
 	}
 
-	cmd := newPomCmd(mockFvm)
+	cmd := newNpmCmd(mockFvm)
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)

@@ -19,8 +19,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/r57ty7/pver/infra"
-	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 )
 
@@ -43,16 +41,10 @@ func newJiraSearchCmd() *cobra.Command {
 		Use:   "search",
 		Short: "Search JIRA ticket",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client, err := infra.NewClient(nil, conf.Jira.BaseURL, conf.Jira.Username, conf.Jira.Password)
-			if err != nil {
-				return err
-			}
-
-			repo := service.NewJiraRepository(client)
-
-			issues, err := repo.Search(context.Background(), "")
+			issues, err := jiraService.Search(context.Background(), "")
 			if err != nil {
 				cmd.PrintErrf("%v\n", err)
+				return err
 			}
 
 			for _, v := range issues {

@@ -17,8 +17,10 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
+	"github.com/r57ty7/pver/infra"
 	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 
@@ -27,11 +29,13 @@ import (
 )
 
 var (
-	cfgFile       string
-	conf          service.Config
-	gitRepository GitRepository
-	pomFvm        FileVersionManager
-	npmFvm        FileVersionManager
+	cfgFile        string
+	conf           service.Config
+	gitRepository  GitRepository
+	pomFvm         FileVersionManager
+	npmFvm         FileVersionManager
+	jiraService    JiraService
+	jiraRepository service.JiraRepository
 )
 
 func NewCmdRoot() *cobra.Command {
@@ -106,5 +110,16 @@ func initConfig() {
 	pomFvm = service.NewMavenProject()
 	npmFvm = service.NewNpmProject()
 	gitRepository = service.NewRepository("./")
+
+	jiraRepository, err = infra.NewJiraRepository(
+		http.DefaultClient,
+		conf.Jira.BaseURL,
+		conf.Jira.Username,
+		conf.Jira.Password,
+	)
+	if err != nil {
+		return err
+	}
+	jiraService = service.NewJiraService(jiraRepository)
 
 }

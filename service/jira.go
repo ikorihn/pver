@@ -133,18 +133,18 @@ type Time struct{}
 type User struct{}
 type Version struct{}
 
-type jiraRepository struct {
-	client JiraClient
+type jiraService struct {
+	repository JiraRepository
 }
 
-// NewJiraRepository returns domain JiraRepository
-func NewJiraRepository(client JiraClient) *jiraRepository {
-	return &jiraRepository{
-		client: client,
+// NewJiraService returns domain JiraService
+func NewJiraService(repository JiraRepository) *jiraService {
+	return &jiraService{
+		repository: repository,
 	}
 }
 
-func (r *jiraRepository) Search(ctx context.Context, jql string) ([]Issue, error) {
+func (r *jiraService) Search(ctx context.Context, jql string) ([]Issue, error) {
 	u := url.URL{
 		Path: "rest/api/search",
 	}
@@ -155,13 +155,13 @@ func (r *jiraRepository) Search(ctx context.Context, jql string) ([]Issue, error
 
 	u.RawQuery = uv.Encode()
 
-	req, err := r.client.NewRequest(http.MethodGet, u.String(), nil)
+	req, err := r.repository.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	searchResults := new(SearchResults)
-	_, err = r.client.Do(req, searchResults)
+	_, err = r.repository.Do(req, searchResults)
 	if err != nil {
 		return nil, err
 	}

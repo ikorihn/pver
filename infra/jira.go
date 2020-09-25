@@ -16,7 +16,7 @@ const (
 	EndpointIssues = "/rest/api/2/issue/%s"
 )
 
-type Client struct {
+type JiraRepository struct {
 	client  *http.Client
 	baseURL *url.URL
 	auth    Authentication
@@ -27,9 +27,9 @@ type Authentication struct {
 	password string
 }
 
-// NewClient create Client
+// NewJiraRepository create JiraRepository
 // if httpClient is not defined, http.DefaultClient is used
-func NewClient(httpClient *http.Client, baseURL string, username, password string) (*Client, error) {
+func NewJiraRepository(httpClient *http.Client, baseURL string, username, password string) (*JiraRepository, error) {
 	if httpClient == nil {
 		httpClient = http.DefaultClient
 	}
@@ -46,7 +46,7 @@ func NewClient(httpClient *http.Client, baseURL string, username, password strin
 
 	auth := Authentication{username, password}
 
-	return &Client{
+	return &JiraRepository{
 		client:  httpClient,
 		baseURL: parsedBaseURL,
 		auth:    auth,
@@ -54,7 +54,7 @@ func NewClient(httpClient *http.Client, baseURL string, username, password strin
 }
 
 // NewRequestWithContext creates http.Request
-func (c *Client) NewRequestWithContext(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
+func (c *JiraRepository) NewRequestWithContext(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
 	rel, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -89,12 +89,12 @@ func (c *Client) NewRequestWithContext(ctx context.Context, method, urlStr strin
 }
 
 // NewRequest wraps NewRequestWithContext using the background context.
-func (c *Client) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+func (c *JiraRepository) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
 	return c.NewRequestWithContext(context.Background(), method, urlStr, body)
 }
 
 // Do sends an API request and returns the API response.
-func (c *Client) Do(req *http.Request, v interface{}) (*http.Response, error) {
+func (c *JiraRepository) Do(req *http.Request, v interface{}) (*http.Response, error) {
 	httpResp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err

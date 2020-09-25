@@ -18,7 +18,7 @@ type GitRepository interface {
 	CommitUpdate(filePath string, updateVer string) error
 }
 
-// JiraRepository JIRA
-type JiraRepository interface {
+// JiraService JIRA
+type JiraService interface {
 	Search(ctx context.Context, jql string) ([]service.Issue, error)
 }

@@ -78,6 +78,8 @@ func NewCmdRoot() *cobra.Command {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	var err error
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -118,7 +120,8 @@ func initConfig() {
 		conf.Jira.Password,
 	)
 	if err != nil {
-		return err
+		fmt.Printf("initialize jiraRepository error: %v\n", err)
+		return
 	}
 	jiraService = service.NewJiraService(jiraRepository)
 

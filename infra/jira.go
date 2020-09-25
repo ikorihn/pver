@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/r57ty7/pver/service"
 )
 
 const (
@@ -53,8 +55,32 @@ func NewJiraRepository(httpClient *http.Client, baseURL string, username, passwo
 	}, nil
 }
 
+func (r *JiraRepository) SearchIssues(jql string) (*service.SearchResults, error) {
+	u := url.URL{
+		Path: EndpointSearch,
+	}
+	uv := url.Values{}
+	if jql != "" {
+		uv.Add("jql", jql)
+	}
+
+	u.RawQuery = uv.Encode()
+
+	req, err := r.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	searchResults := new(service.SearchResults)
+	_, err = r.Do(req, searchResults)
+	if err != nil {
+		return nil, err
+	}
+	return searchResults, nil
+}
+
 // NewRequestWithContext creates http.Request
-func (c *JiraRepository) NewRequestWithContext(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
+func (r *JiraRepository) NewRequestWithContext(ctx context.Context, method, urlStr string, body interface{}) (*http.Request, error) {
 	rel, err := url.Parse(urlStr)
 	if err != nil {
 		return nil, err
@@ -63,7 +89,7 @@ func (c *JiraRepository) NewRequestWithContext(ctx context.Context, method, urlS
 	// trim preceding slash since base url has trailling slash
 	rel.Path = strings.TrimLeft(rel.Path, "/")
 
-	u := c.baseURL.ResolveReference(rel)
+	u := r.baseURL.ResolveReference(rel)
 
 	var buf io.ReadWriter
 	if body != nil {
@@ -82,20 +108,20 @@ func (c *JiraRepository) NewRequestWithContext(ctx context.Context, method, urlS
 	req.Header.Set("Content-Type", "application/json")
 
 	// Set authentication information
-	req.SetBasicAuth(c.auth.username, c.auth.password)
+	req.SetBasicAuth(r.auth.username, r.auth.password)
 
 	return req, nil
 
 }
 
 // NewRequest wraps NewRequestWithContext using the background context.
-func (c *JiraRepository) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
-	return c.NewRequestWithContext(context.Background(), method, urlStr, body)
+func (r *JiraRepository) NewRequest(method, urlStr string, body interface{}) (*http.Request, error) {
+	return r.NewRequestWithContext(context.Background(), method, urlStr, body)
 }
 
 // Do sends an API request and returns the API response.
-func (c *JiraRepository) Do(req *http.Request, v interface{}) (*http.Response, error) {
-	httpResp, err := c.client.Do(req)
+func (r *JiraRepository) Do(req *http.Request, v interface{}) (*http.Response, error) {
+	httpResp, err := r.client.Do(req)
 	if err != nil {
 		return nil, err
 	}

@@ -2,8 +2,6 @@ package service
 
 import (
 	"context"
-	"net/http"
-	"net/url"
 )
 
 type SearchResults struct {
@@ -145,26 +143,10 @@ func NewJiraService(repository JiraRepository) *jiraService {
 }
 
 func (r *jiraService) Search(ctx context.Context, jql string) ([]Issue, error) {
-	u := url.URL{
-		Path: "rest/api/search",
-	}
-	uv := url.Values{}
-	if jql != "" {
-		uv.Add("jql", jql)
-	}
-
-	u.RawQuery = uv.Encode()
-
-	req, err := r.repository.NewRequest(http.MethodGet, u.String(), nil)
+	result, err := r.repository.SearchIssues(jql)
 	if err != nil {
 		return nil, err
 	}
 
-	searchResults := new(SearchResults)
-	_, err = r.repository.Do(req, searchResults)
-	if err != nil {
-		return nil, err
-	}
-
-	return searchResults.Issues, nil
+	return result.Issues, nil
 }

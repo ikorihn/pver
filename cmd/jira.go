@@ -19,6 +19,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/ktr0731/go-fuzzyfinder"
+	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 )
 
@@ -32,27 +34,97 @@ func newJiraCmd() *cobra.Command {
 	}
 
 	jiraCmd.AddCommand(newJiraSearchCmd())
+	jiraCmd.AddCommand(newJiraBranchCmd())
 
 	return jiraCmd
 }
 
 func newJiraSearchCmd() *cobra.Command {
 	var jiraCmd = &cobra.Command{
-		Use:   "search",
+		Use:   "search [jql]",
 		Short: "Search JIRA ticket",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			issues, err := jiraService.Search(context.Background(), "")
+			jql := conf.Jira.JQL
+			if len(args) > 0 {
+				jql = args[0]
+			}
+			issues, err := jiraService.Search(context.Background(), jql)
 			if err != nil {
 				cmd.PrintErrf("%v\n", err)
 				return err
 			}
 
 			for _, v := range issues {
-				fmt.Printf("%v\n", v)
+				cmd.Printf("%v\n", v.Key)
 			}
 
 			return nil
 		},
 	}
 	return jiraCmd
+}
+
+func newJiraBranchCmd() *cobra.Command {
+	var jiraCmd = &cobra.Command{
+		Use:   "branch [jql]",
+		Short: "Create branch from JIRA ticket",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			jql := conf.Jira.JQL
+			if len(args) > 0 {
+				jql = args[0]
+			}
+
+			issues, err := jiraService.Search(context.Background(), jql)
+			if err != nil {
+				cmd.PrintErrf("%v\n", err)
+				return err
+			}
+
+			for _, v := range issues {
+				cmd.Printf("%v\n", v.Key)
+			}
+
+			issue, err := selectTicket(issues)
+			if err != nil {
+				cmd.PrintErrf("%v\n", err)
+				return err
+			}
+
+			cmd.Printf("Ticket: %+v\n", issue.Key)
+
+			err = gitRepository.CreateBranch("feature/" + issue.Key)
+			if err != nil {
+				cmd.PrintErrf("%v\n", err)
+				return err
+			}
+
+			return nil
+		},
+	}
+	return jiraCmd
+}
+
+func selectTicket(issues []service.Issue) (*service.Issue, error) {
+	// select ticket
+	idx, err := fuzzyfinder.Find(
+		issues,
+		func(i int) string {
+			return issues[i].Key
+		},
+		fuzzyfinder.WithPreviewWindow(func(i, w, h int) string {
+			if i == -1 {
+				return ""
+			}
+			return fmt.Sprintf("ID: %s\nDescription: %s",
+				issues[i].Key,
+				issues[i].Fields.Description,
+			)
+		}))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &issues[idx], nil
+
 }

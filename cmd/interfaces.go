@@ -16,6 +16,7 @@ type FileVersionManager interface {
 // GitRepository Git関連
 type GitRepository interface {
 	CommitUpdate(filePath string, updateVer string) error
+	CreateBranch(name string) error
 }
 
 // JiraService JIRA

@@ -19,4 +19,5 @@ type jira struct {
 	BaseURL  string
 	Username string
 	Password string
+	JQL      string
 }

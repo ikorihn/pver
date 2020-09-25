@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/tcnksm/go-gitconfig"
 )
@@ -59,4 +60,21 @@ func (r *repository) CommitUpdate(filePath string, updateVer string) error {
 	})
 
 	return nil
+}
+
+func (r *repository) CreateBranch(name string) error {
+	repo, err := git.PlainOpen(r.wd)
+	if err != nil {
+		return err
+	}
+
+	headRef, err := repo.Head()
+	if err != nil {
+		return err
+	}
+
+	branchName := plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", name))
+	ref := plumbing.NewHashReference(branchName, headRef.Hash())
+
+	return repo.Storer.SetReference(ref)
 }

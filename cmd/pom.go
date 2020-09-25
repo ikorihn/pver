@@ -20,7 +20,7 @@ import (
 )
 
 // pomCmd represents the pom command
-func newPomCmd(fvm FileVersionManager) *cobra.Command {
+func newPomCmd() *cobra.Command {
 	var updateVer string
 
 	var pomCmd = &cobra.Command{
@@ -34,12 +34,12 @@ func newPomCmd(fvm FileVersionManager) *cobra.Command {
 				conf.Pom.Indent = "  "
 			}
 
-			fvm.SetConfig(conf)
-			version := fvm.Version()
+			pomFvm.SetConfig(conf)
+			version := pomFvm.Version()
 			cmd.Printf("Version: %v\n", version)
 
 			if updateVer != "" {
-				err := fvm.Update(updateVer)
+				err := pomFvm.Update(updateVer)
 				if err != nil {
 					cmd.PrintErrf("update error: %v", err)
 					return err

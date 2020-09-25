@@ -65,12 +65,8 @@ func NewCmdRoot() *cobra.Command {
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	pomFvm = service.NewMavenProject()
-	npmFvm = service.NewNpmProject()
-	gitRepository = service.NewRepository("./")
-
-	rootCmd.AddCommand(newPomCmd(pomFvm))
-	rootCmd.AddCommand(newNpmCmd(npmFvm))
+	rootCmd.AddCommand(newPomCmd())
+	rootCmd.AddCommand(newNpmCmd())
 	rootCmd.AddCommand(newJiraCmd())
 
 	return rootCmd
@@ -106,4 +102,9 @@ func initConfig() {
 		fmt.Printf("unmarshal error: %v\n", err)
 		return
 	}
+
+	pomFvm = service.NewMavenProject()
+	npmFvm = service.NewNpmProject()
+	gitRepository = service.NewRepository("./")
+
 }

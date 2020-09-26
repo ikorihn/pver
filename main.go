@@ -22,6 +22,8 @@ import (
 	"github.com/r57ty7/pver/cmd"
 )
 
+var Version string
+
 func main() {
 	cmd := cmd.NewCmdRoot(Version)
 	if err := cmd.Execute(); err != nil {

@@ -12,8 +12,9 @@ func Test_npmCmd_Execute(t *testing.T) {
 	mockFvm := &mockFvm{
 		version: "1.0.0",
 	}
+	npmFvm = mockFvm
 
-	cmd := newNpmCmd(mockFvm)
+	cmd := newNpmCmd()
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)
@@ -37,8 +38,9 @@ func Test_npmCmd_Execute_Update(t *testing.T) {
 	mockFvm := &mockFvm{
 		version: "1.0.0",
 	}
+	npmFvm = mockFvm
 
-	cmd := newNpmCmd(mockFvm)
+	cmd := newNpmCmd()
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)

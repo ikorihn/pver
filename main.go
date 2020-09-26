@@ -20,14 +20,10 @@ import (
 	"os"
 
 	"github.com/r57ty7/pver/cmd"
-	"github.com/r57ty7/pver/service"
 )
 
 func main() {
-	pomFvm := service.NewMavenProject()
-	npmFvm := service.NewNpmProject()
-	repository := service.NewRepository("./")
-	cmd := cmd.NewCmdRoot(pomFvm, npmFvm, repository)
+	cmd := cmd.NewCmdRoot()
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

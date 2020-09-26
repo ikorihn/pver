@@ -20,7 +20,7 @@ import (
 )
 
 // npmCmd represents the npm command
-func newNpmCmd(fvm FileVersionManager) *cobra.Command {
+func newNpmCmd() *cobra.Command {
 	var updateVer string
 
 	var npmCmd = &cobra.Command{
@@ -31,12 +31,12 @@ func newNpmCmd(fvm FileVersionManager) *cobra.Command {
 				conf.Npm.Filepath = "package.json"
 			}
 
-			fvm.SetConfig(conf)
-			version := fvm.Version()
+			npmFvm.SetConfig(conf)
+			version := npmFvm.Version()
 			cmd.Printf("Version: %v\n", version)
 
 			if updateVer != "" {
-				err := fvm.Update(updateVer)
+				err := npmFvm.Update(updateVer)
 				if err != nil {
 					cmd.PrintErrf("update error: %v", err)
 					return err

@@ -13,8 +13,9 @@ func Test_pomCmd_Execute(t *testing.T) {
 	mockFvm := &mockFvm{
 		version: "1.0.0",
 	}
+	pomFvm = mockFvm
 
-	cmd := newPomCmd(mockFvm)
+	cmd := newPomCmd()
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)
@@ -39,8 +40,9 @@ func Test_pomCmd_Execute_Update(t *testing.T) {
 	mockFvm := &mockFvm{
 		version: "1.0.0",
 	}
+	pomFvm = mockFvm
 
-	cmd := newPomCmd(mockFvm)
+	cmd := newPomCmd()
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)

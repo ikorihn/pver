@@ -17,22 +17,28 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
+	"github.com/r57ty7/pver/infra"
+	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile        string
+	conf           service.Config
+	gitRepository  GitRepository
+	pomFvm         FileVersionManager
+	npmFvm         FileVersionManager
+	jiraService    JiraService
+	jiraRepository service.JiraRepository
+)
 
-var gitRepository GitRepository
-
-var conf Config
-
-func NewCmdRoot(pomFvm FileVersionManager, npmFvm FileVersionManager, gr GitRepository) *cobra.Command {
-	gitRepository = gr
+func NewCmdRoot() *cobra.Command {
 
 	// rootCmd represents the base command when called without any subcommands
 	var rootCmd = &cobra.Command{
@@ -63,14 +69,17 @@ func NewCmdRoot(pomFvm FileVersionManager, npmFvm FileVersionManager, gr GitRepo
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.AddCommand(newPomCmd(pomFvm))
-	rootCmd.AddCommand(newNpmCmd(npmFvm))
+	rootCmd.AddCommand(newPomCmd())
+	rootCmd.AddCommand(newNpmCmd())
+	rootCmd.AddCommand(newJiraCmd())
 
 	return rootCmd
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	var err error
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -99,4 +108,21 @@ func initConfig() {
 		fmt.Printf("unmarshal error: %v\n", err)
 		return
 	}
+
+	pomFvm = service.NewMavenProject()
+	npmFvm = service.NewNpmProject()
+	gitRepository = service.NewRepository("./")
+
+	jiraRepository, err = infra.NewJiraRepository(
+		http.DefaultClient,
+		conf.Jira.BaseURL,
+		conf.Jira.Username,
+		conf.Jira.Password,
+	)
+	if err != nil {
+		fmt.Printf("initialize jiraRepository error: %v\n", err)
+		return
+	}
+	jiraService = service.NewJiraService(jiraRepository)
+
 }

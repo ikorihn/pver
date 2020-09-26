@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"regexp"
-
-	"github.com/r57ty7/pver/cmd"
 )
 
 type MavenProject struct {
@@ -86,7 +84,7 @@ func (p *MavenProject) parse() (PomXml, error) {
 	return pom, nil
 }
 
-func (p *MavenProject) SetConfig(config cmd.Config) {
+func (p *MavenProject) SetConfig(config Config) {
 	p.filePath = config.Pom.Filepath
 	p.indent = config.Pom.Indent
 }

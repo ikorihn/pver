@@ -20,6 +20,8 @@ import (
 	"fmt"
 
 	"github.com/ktr0731/go-fuzzyfinder"
+	"github.com/kyokomi/emoji"
+	"github.com/manifoldco/promptui"
 	"github.com/r57ty7/pver/service"
 	"github.com/spf13/cobra"
 )
@@ -80,23 +82,21 @@ func newJiraBranchCmd() *cobra.Command {
 				return err
 			}
 
-			for _, v := range issues {
-				cmd.Printf("%v\n", v.Key)
-			}
-
 			issue, err := selectTicket(issues)
 			if err != nil {
 				cmd.PrintErrf("%v\n", err)
 				return err
 			}
 
-			cmd.Printf("Ticket: %+v\n", issue.Key)
-
-			err = gitRepository.CreateBranch("feature/" + issue.Key)
+			suffix := inputBranchSuffix()
+			err = gitRepository.CreateBranch(fmt.Sprintf("feature/%s_%s", issue.Key, suffix))
 			if err != nil {
 				cmd.PrintErrf("%v\n", err)
 				return err
 			}
+
+			message := emoji.Sprintf(":check_mark: Created branch")
+			cmd.Println(message)
 
 			return nil
 		},
@@ -127,4 +127,12 @@ func selectTicket(issues []service.Issue) (*service.Issue, error) {
 
 	return &issues[idx], nil
 
+}
+
+func inputBranchSuffix() string {
+	prompt := promptui.Prompt{
+		Label: "Branch suffix: ",
+	}
+	result, _ := prompt.Run()
+	return result
 }

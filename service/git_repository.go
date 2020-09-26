@@ -51,15 +51,14 @@ func (r *repository) CommitUpdate(filePath string, updateVer string) error {
 
 	commitMessage := fmt.Sprintf("version up to %s", updateVer)
 	fmt.Printf("commit: %s", commitMessage)
-	w.Commit(commitMessage, &git.CommitOptions{
+	_, err = w.Commit(commitMessage, &git.CommitOptions{
 		Author: &object.Signature{
 			Email: email,
 			Name:  name,
 			When:  time.Now(),
 		},
 	})
-
-	return nil
+	return err
 }
 
 func (r *repository) CreateBranch(name string) error {

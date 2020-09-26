@@ -19,7 +19,7 @@ func Test_pomCmd_Execute(t *testing.T) {
 
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)
-	cmd.Execute()
+	_ = cmd.Execute()
 	got, err := ioutil.ReadAll(b)
 	if err != nil {
 		t.Fatalf("got unexpected error: %v", err)
@@ -47,7 +47,7 @@ func Test_pomCmd_Execute_Update(t *testing.T) {
 	b := bytes.NewBufferString("")
 	cmd.SetOut(b)
 	cmd.SetArgs([]string{"-u", "1.2.3"})
-	cmd.Execute()
+	_ = cmd.Execute()
 	got, err := ioutil.ReadAll(b)
 	if err != nil {
 		t.Fatalf("got unexpected error: %v", err)

@@ -46,7 +46,11 @@ func newPomCmd() *cobra.Command {
 				}
 				cmd.Printf("Updated to => %v\n", updateVer)
 
-				gitRepository.CommitUpdate(conf.Pom.Filepath, updateVer)
+				err = gitRepository.CommitUpdate(conf.Pom.Filepath, updateVer)
+				if err != nil {
+					cmd.PrintErrf("update error: %v", err)
+					return err
+				}
 			}
 			return nil
 		},

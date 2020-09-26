@@ -43,7 +43,11 @@ func newNpmCmd() *cobra.Command {
 				}
 				cmd.Printf("Updated to => %v\n", updateVer)
 
-				gitRepository.CommitUpdate(conf.Npm.Filepath, updateVer)
+				err = gitRepository.CommitUpdate(conf.Npm.Filepath, updateVer)
+				if err != nil {
+					cmd.PrintErrf("commit error: %v", err)
+					return err
+				}
 			}
 			return nil
 		},

@@ -37,6 +37,7 @@ func newJiraCmd() *cobra.Command {
 	}
 
 	jiraCmd.AddCommand(newJiraSearchCmd())
+	jiraCmd.AddCommand(newJiraOpenCmd())
 	jiraCmd.AddCommand(newJiraBranchCmd())
 
 	return jiraCmd

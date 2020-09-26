@@ -68,13 +68,17 @@ func (r *repository) CreateBranch(name string) error {
 		return err
 	}
 
-	headRef, err := repo.Head()
+	w, err := repo.Worktree()
 	if err != nil {
 		return err
 	}
 
-	branchName := plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", name))
-	ref := plumbing.NewHashReference(branchName, headRef.Hash())
+	branchName := plumbing.NewBranchReferenceName(name)
 
-	return repo.Storer.SetReference(ref)
+	return w.Checkout(&git.CheckoutOptions{
+		Branch: branchName,
+		Create: true,
+		Keep:   true,
+	})
+
 }

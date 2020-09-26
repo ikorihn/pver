@@ -80,11 +80,7 @@ func newJiraOpenCmd() *cobra.Command {
 				return err
 			}
 
-			for _, v := range issues {
-				cmd.Printf("%v\n", v.Key)
-			}
-
-			return nil
+			return openTicket(issue)
 		},
 	}
 	return jiraCmd
@@ -123,7 +119,7 @@ func newJiraBranchCmd() *cobra.Command {
 	return jiraCmd
 }
 
-func searchTicket(args []string) (*service.Issue, error) {
+func searchTicket(args []string) ([]service.Issue, error) {
 	jql := conf.Jira.JQL
 	if len(args) > 0 {
 		jql = args[0]
@@ -133,7 +129,7 @@ func searchTicket(args []string) (*service.Issue, error) {
 
 }
 
-func selectTicket(issues []service.Issue) (*service.Issue, error) {
+func selectTicket(issues []service.Issue) (service.Issue, error) {
 	// select ticket
 	idx, err := fuzzyfinder.Find(
 		issues,
@@ -151,11 +147,10 @@ func selectTicket(issues []service.Issue) (*service.Issue, error) {
 		}))
 
 	if err != nil {
-		return nil, err
+		return service.Issue{}, err
 	}
 
-	return &issues[idx], nil
-
+	return issues[idx], nil
 }
 
 func openTicket(issue service.Issue) error {

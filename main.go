@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	cmd := cmd.NewCmdRoot()
+	cmd := cmd.NewCmdRoot(Version)
 	if err := cmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)

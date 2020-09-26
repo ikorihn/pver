@@ -18,6 +18,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os/exec"
 
 	"github.com/ktr0731/go-fuzzyfinder"
 	"github.com/kyokomi/emoji"
@@ -46,11 +47,34 @@ func newJiraSearchCmd() *cobra.Command {
 		Use:   "search [jql]",
 		Short: "Search JIRA ticket",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			jql := conf.Jira.JQL
-			if len(args) > 0 {
-				jql = args[0]
+			issues, err := searchTicket(args)
+			if err != nil {
+				cmd.PrintErrf("%v\n", err)
+				return err
 			}
-			issues, err := jiraService.Search(context.Background(), jql)
+
+			for _, v := range issues {
+				cmd.Printf("%v\n", v.Key)
+			}
+
+			return nil
+		},
+	}
+	return jiraCmd
+}
+
+func newJiraOpenCmd() *cobra.Command {
+	var jiraCmd = &cobra.Command{
+		Use:   "open [jql]",
+		Short: "Open browser with JIRA ticket",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			issues, err := searchTicket(args)
+			if err != nil {
+				cmd.PrintErrf("%v\n", err)
+				return err
+			}
+
+			issue, err := selectTicket(issues)
 			if err != nil {
 				cmd.PrintErrf("%v\n", err)
 				return err
@@ -71,12 +95,7 @@ func newJiraBranchCmd() *cobra.Command {
 		Use:   "branch [jql]",
 		Short: "Create branch from JIRA ticket",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			jql := conf.Jira.JQL
-			if len(args) > 0 {
-				jql = args[0]
-			}
-
-			issues, err := jiraService.Search(context.Background(), jql)
+			issues, err := searchTicket(args)
 			if err != nil {
 				cmd.PrintErrf("%v\n", err)
 				return err
@@ -104,6 +123,16 @@ func newJiraBranchCmd() *cobra.Command {
 	return jiraCmd
 }
 
+func searchTicket(args []string) (*service.Issue, error) {
+	jql := conf.Jira.JQL
+	if len(args) > 0 {
+		jql = args[0]
+	}
+
+	return jiraService.Search(context.Background(), jql)
+
+}
+
 func selectTicket(issues []service.Issue) (*service.Issue, error) {
 	// select ticket
 	idx, err := fuzzyfinder.Find(
@@ -127,6 +156,11 @@ func selectTicket(issues []service.Issue) (*service.Issue, error) {
 
 	return &issues[idx], nil
 
+}
+
+func openTicket(issue service.Issue) error {
+	url := conf.Jira.BaseURL + "/browse/" + issue.Key
+	return exec.Command("open", url).Start()
 }
 
 func inputBranchSuffix() string {

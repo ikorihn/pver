@@ -141,9 +141,9 @@ func selectTicket(issues []service.Issue) (service.Issue, error) {
 			if i == -1 {
 				return ""
 			}
-			return fmt.Sprintf("ID: %s\nDescription: %s",
+			return fmt.Sprintf("ID: %s\nSummary: %s",
 				issues[i].Key,
-				issues[i].Fields.Description,
+				issues[i].Fields.Summary,
 			)
 		}))
 

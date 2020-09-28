@@ -118,7 +118,7 @@ type Project struct {
 	Roles        map[string]string `json:"roles,omitempty" structs:"roles,omitempty"`
 }
 
-type Date struct{}
+type Date string
 type Status struct{}
 type IssueLink struct{}
 type Comments struct{}
@@ -127,7 +127,7 @@ type Subtasks struct{}
 type Epic struct{}
 type Parent struct{}
 type Sprint struct{}
-type Time struct{}
+type Time string
 type User struct{}
 type Version struct{}
 
